@@ -1,0 +1,27 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "api-library"
+version = "0.1.0"
+description = "API para gerenciamento de empréstimos de livro seguindo Clean Architecture"
+authors = ["Your Name <your.email@example.com>"]
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.13"
+fastapi = "^0.104.1"
+uvicorn = {extras = ["standard"], version = "^0.24.0"}
+sqlalchemy = "^2.0.23"
+psycopg = {extras = ["binary"], version = "^3.1.13"}
+psycopg2-binary = "^2.9.9"
+passlib = "^1.7.4"
+pyjwt = "^2.8.0"
+redis = "^5.0.1"
+prometheus-client = "^0.19.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+pytest-asyncio = "^0.21.1"
+httpx = "^0.25.2"

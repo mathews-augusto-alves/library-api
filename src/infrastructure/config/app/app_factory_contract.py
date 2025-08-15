@@ -1,0 +1,9 @@
+from typing import Protocol
+from src.presentation.controllers.usuario_controllers import UsuarioControllers
+from src.presentation.controllers.pessoa_controllers import PessoaControllers
+from src.presentation.controllers.livro_controllers import LivroControllers
+ 
+class ApplicationFactory(Protocol):
+    def create_usuario_controller(self) -> UsuarioControllers: ...
+    def create_pessoa_controller(self) -> PessoaControllers: ...
+    def create_livro_controller(self) -> LivroControllers: ... 
