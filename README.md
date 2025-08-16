@@ -4,11 +4,11 @@ Uma API REST para gerenciamento de livros, usuários, pessoas e empréstimos de 
 
 ## 📚 **Informações Importantes**
 
-> **💡 Decisões Técnicas e Justificativas**: Para entender as escolhas arquiteturais, padrões implementados e justificativas técnicas, consulte o arquivo [`docs/DECISOES_TECNICAS.md`](./docs/DECISOES_TECNICAS.md).
+> **💡 Decisões Técnicas e Justificativas**: consulte o arquivo [`docs/DECISOES_TECNICAS.md`](./docs/DECISOES_TECNICAS.md).
 
-> **🚀 Plano de Evolução**: Para conhecer o roadmap de evolução da aplicação, consulte o arquivo [`docs/PLANO_EVOLUCAO.md`](./docs/PLANO_EVOLUCAO.md).
+> **🚀 Plano de Evolução**: consulte o arquivo [`docs/PLANO_EVOLUCAO.md`](./docs/PLANO_EVOLUCAO.md).
 
-> **🎯 Liderança e Coordenação**: Para práticas de gestão de time e processos de desenvolvimento, consulte o arquivo [`docs/LIDERANCA_COORDENACAO.md`](./docs/LIDERANCA_COORDENACAO.md).
+> **🎯 Liderança e Coordenação**: consulte o arquivo [`docs/LIDERANCA_COORDENACAO.md`](./docs/LIDERANCA_COORDENACAO.md).
 
 ## 🚀 **Tecnologias**
 
@@ -368,14 +368,7 @@ O projeto inclui um dashboard pré-configurado **"API Library - Dashboard Técni
 - **Métricas de banco de dados**
 - **Performance da aplicação** (memória/CPU)
 
-## 📚 **Documentação Adicional**
+## 📞 **Dúvidas**
 
-- **Decisões Técnicas**: [`docs/DECISOES_TECNICAS.md`](./docs/DECISOES_TECNICAS.md) - Arquitetura, padrões e justificativas
-- **Sistema de Métricas**: [`docs/metrics.md`](./docs/metrics.md) - Detalhes do monitoramento Prometheus/Grafana
-- **Plano de Evolução**: [`docs/PLANO_EVOLUCAO.md`](./docs/PLANO_EVOLUCAO.md) - Roadmap de evolução da aplicação
-- **Liderança e Coordenação**: [`docs/LIDERANCA_COORDENACAO.md`](./docs/LIDERANCA_COORDENACAO.md) - Práticas de gestão de time
-
-## 📞 **Suporte**
-
-Para dúvidas ou suporte, entre em contato:
+Para dúvidas, entre em contato:
 - **Email**: mathews.alves.job@outlook.com
