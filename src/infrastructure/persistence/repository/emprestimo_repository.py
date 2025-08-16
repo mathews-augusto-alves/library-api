@@ -60,7 +60,16 @@ class EmprestimoRepository(EmprestimoRepositoryPort):
             EmprestimoModel.livro_id == livro_id,
             EmprestimoModel.data_devolucao.is_(None)
         ).first()
-        return Emprestimo(**r.__dict__) if r else None
+        if r:
+            return Emprestimo(
+                id=r.id,
+                livro_id=r.livro_id,
+                pessoa_id=r.pessoa_id,
+                usuario_id=r.usuario_id,
+                data_emprestimo=r.data_emprestimo,
+                data_devolucao=r.data_devolucao
+            )
+        return None
 
     def finalizar(self, emprestimo_id: int) -> Emprestimo | None:
         db_emp = self.db.query(EmprestimoModel).filter(EmprestimoModel.id == emprestimo_id).first()
@@ -68,4 +77,11 @@ class EmprestimoRepository(EmprestimoRepositoryPort):
             return None
         db_emp.data_devolucao = datetime.now(self._tz)
         self.db.flush()
-        return Emprestimo(**db_emp.__dict__)
+        return Emprestimo(
+            id=db_emp.id,
+            livro_id=db_emp.livro_id,
+            pessoa_id=db_emp.pessoa_id,
+            usuario_id=db_emp.usuario_id,
+            data_emprestimo=db_emp.data_emprestimo,
+            data_devolucao=db_emp.data_devolucao
+        )
