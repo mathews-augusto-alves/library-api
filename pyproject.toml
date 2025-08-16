@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 name = "api-library"
 version = "0.1.0"
 description = "API para gerenciamento de empréstimos de livro seguindo Clean Architecture"
-authors = ["Your Name <your.email@example.com>"]
+authors = ["Mathews Alves <mathews.alves.job@outlook.com>"]
 packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
