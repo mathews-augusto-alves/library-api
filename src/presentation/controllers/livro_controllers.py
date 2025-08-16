@@ -1,5 +1,5 @@
 from src.application.usecase.livro_usecases import LivroUseCase
-from src.presentation.dto.livro_dto import LivroCreateRequest, LivroResponse, EmprestimoResponse
+from src.presentation.dto.livro_dto import LivroCreateRequest, LivroResponse, EmprestimoResponse, LivroBrief, PessoaBrief
 from src.presentation.dto.common import PaginationParams, PaginationMeta, PaginatedResponse
 from src.domain.enums.emprestimo_status import EmprestimoStatus
 import json
@@ -69,6 +69,8 @@ class LivroControllers:
 		response_data = []
 		
 		for e in emprestimos:
+			livro = self.usecase.obter_livro_por_id(e.livro_id)
+			pessoa = self.usecase.obter_pessoa_por_id(e.pessoa_id)
 			response_data.append(EmprestimoResponse(
 				id=e.id,
 				livro_id=e.livro_id,
@@ -76,6 +78,8 @@ class LivroControllers:
 				usuario_id=e.usuario_id,
 				data_emprestimo=e.data_emprestimo.isoformat(),
 				data_devolucao=e.data_devolucao.isoformat() if e.data_devolucao else None,
+				livro=LivroBrief(id=livro.id, titulo=livro.titulo, autor=livro.autor) if livro else None,
+				pessoa=PessoaBrief(id=pessoa.id, nome=pessoa.nome, telefone=pessoa.telefone, email=pessoa.email) if pessoa else None,
 			))
 		
 		cache_payload = {
@@ -86,20 +90,42 @@ class LivroControllers:
 		
 		return PaginatedResponse(data=response_data, meta=meta)
 
-	def emprestar(self, livro_id: int, pessoa_id: int, usuario_id: int, cache: Redis):
+	def emprestar(self, livro_id: int, pessoa_id: int, usuario_id: int, cache: Redis) -> EmprestimoResponse:
 		result = self.usecase.emprestar(livro_id, pessoa_id, usuario_id)
 		
 		cache_delete_safe(cache, "livros:list")
 		cache_delete_safe(cache, f"livros:{livro_id}")
 		cache_delete_safe(cache, "emprestimos:list")
 		
-		return result
+		livro = self.usecase.obter_livro_por_id(result.livro_id)
+		pessoa = self.usecase.obter_pessoa_por_id(result.pessoa_id)
+		return EmprestimoResponse(
+			id=result.id,
+			livro_id=result.livro_id,
+			pessoa_id=result.pessoa_id,
+			usuario_id=result.usuario_id,
+			data_emprestimo=result.data_emprestimo.isoformat(),
+			data_devolucao=result.data_devolucao.isoformat() if result.data_devolucao else None,
+			livro=LivroBrief(id=livro.id, titulo=livro.titulo, autor=livro.autor) if livro else None,
+			pessoa=PessoaBrief(id=pessoa.id, nome=pessoa.nome, telefone=pessoa.telefone, email=pessoa.email) if pessoa else None,
+		)
 
-	def devolver(self, livro_id: int, cache: Redis):
+	def devolver(self, livro_id: int, cache: Redis) -> EmprestimoResponse:
 		result = self.usecase.devolver(livro_id)
 		
 		cache_delete_safe(cache, "livros:list")
 		cache_delete_safe(cache, f"livros:{livro_id}")
 		cache_delete_safe(cache, "emprestimos:list")
 		
-		return result 
+		livro = self.usecase.obter_livro_por_id(result.livro_id)
+		pessoa = self.usecase.obter_pessoa_por_id(result.pessoa_id)
+		return EmprestimoResponse(
+			id=result.id,
+			livro_id=result.livro_id,
+			pessoa_id=result.pessoa_id,
+			usuario_id=result.usuario_id,
+			data_emprestimo=result.data_emprestimo.isoformat(),
+			data_devolucao=result.data_devolucao.isoformat() if result.data_devolucao else None,
+			livro=LivroBrief(id=livro.id, titulo=livro.titulo, autor=livro.autor) if livro else None,
+			pessoa=PessoaBrief(id=pessoa.id, nome=pessoa.nome, telefone=pessoa.telefone, email=pessoa.email) if pessoa else None,
+		) 

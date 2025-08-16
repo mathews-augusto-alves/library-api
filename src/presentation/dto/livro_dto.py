@@ -1,4 +1,5 @@
 from pydantic import BaseModel, field_validator, ConfigDict
+from typing import Optional
 
 class LivroCreateRequest(BaseModel):
     titulo: str
@@ -28,6 +29,17 @@ class EmprestimoCreateRequest(BaseModel):
     livro_id: int
     pessoa_id: int
 
+class LivroBrief(BaseModel):
+    id: int
+    titulo: str
+    autor: str
+
+class PessoaBrief(BaseModel):
+    id: int
+    nome: str
+    telefone: str
+    email: Optional[str] = None
+
 class EmprestimoResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -36,4 +48,6 @@ class EmprestimoResponse(BaseModel):
     pessoa_id: int
     usuario_id: int
     data_emprestimo: str
-    data_devolucao: str | None 
+    data_devolucao: str | None
+    livro: Optional[LivroBrief] = None
+    pessoa: Optional[PessoaBrief] = None 

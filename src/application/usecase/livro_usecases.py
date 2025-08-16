@@ -61,6 +61,12 @@ class LivroUseCase:
 
         return self._emprestimos.devolver(emprestimo_ativo.id, livro.id)
 
+    def obter_livro_por_id(self, livro_id: int) -> Livro | None:
+        return self._livros.buscar_por_id(livro_id)
+
+    def obter_pessoa_por_id(self, pessoa_id: int):
+        return self._pessoas.buscar_por_id(pessoa_id)
+
     def _obter_livro_existente(self, livro_id: int) -> Livro:
         livro = self._livros.buscar_por_id(livro_id)
         if not livro:
