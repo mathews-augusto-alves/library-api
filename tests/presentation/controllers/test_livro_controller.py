@@ -122,7 +122,10 @@ class TestLivroController:
     def test_emprestar_livro_sucesso(self, mock_livro_usecase):
         """Teste de empréstimo de livro com sucesso."""
         # Arrange
-        mock_livro_usecase.emprestar.return_value = Mock(id=1, livro_id=1, pessoa_id=1, usuario_id=1)
+        mock_livro_usecase.emprestar.return_value = Mock(id=1, livro_id=1, pessoa_id=1, usuario_id=1, data_emprestimo=Mock(isoformat=lambda: "2023-01-01"), data_devolucao=None)
+        # Enriquecimento esperado pelo controller
+        mock_livro_usecase.obter_livro_por_id.return_value = Mock(id=1, titulo="Livro 1", autor="Autor 1")
+        mock_livro_usecase.obter_pessoa_por_id.return_value = Mock(id=1, nome="Pessoa 1", telefone="11999999999", email="p1@example.com")
         
         controller = LivroControllers(mock_livro_usecase)
         mock_cache = Mock()
@@ -141,6 +144,9 @@ class TestLivroController:
         mock_livro_usecase.listar_emprestimos_paginado.return_value = ([
             Mock(id=1, livro_id=1, pessoa_id=1, usuario_id=1, data_emprestimo=Mock(isoformat=lambda: "2023-01-01"), data_devolucao=None)
         ], 1)
+        # Enriquecimento esperado pelo controller
+        mock_livro_usecase.obter_livro_por_id.return_value = Mock(id=1, titulo="Livro 1", autor="Autor 1")
+        mock_livro_usecase.obter_pessoa_por_id.return_value = Mock(id=1, nome="Pessoa 1", telefone="11999999999", email="p1@example.com")
         
         controller = LivroControllers(mock_livro_usecase)
         mock_cache = Mock()
@@ -175,7 +181,10 @@ class TestLivroController:
     def test_devolver_livro_sucesso(self, mock_livro_usecase):
         """Teste de devolução de livro com sucesso."""
         # Arrange
-        mock_livro_usecase.devolver.return_value = Mock(id=1, livro_id=1, pessoa_id=1, usuario_id=1)
+        mock_livro_usecase.devolver.return_value = Mock(id=1, livro_id=1, pessoa_id=1, usuario_id=1, data_emprestimo=Mock(isoformat=lambda: "2023-01-01"), data_devolucao=Mock(isoformat=lambda: "2023-01-02"))
+        # Enriquecimento esperado pelo controller
+        mock_livro_usecase.obter_livro_por_id.return_value = Mock(id=1, titulo="Livro 1", autor="Autor 1")
+        mock_livro_usecase.obter_pessoa_por_id.return_value = Mock(id=1, nome="Pessoa 1", telefone="11999999999", email="p1@example.com")
         
         controller = LivroControllers(mock_livro_usecase)
         mock_cache = Mock()
