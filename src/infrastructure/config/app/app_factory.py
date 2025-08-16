@@ -6,6 +6,8 @@ from src.presentation.routes.usuario_routes import router as usuario_router, aut
 from src.presentation.routes.livro_routes import router as livro_router, emprestimo_router
 from src.infrastructure.monitoring.metrics import get_metrics, MetricsMiddleware
 from src.infrastructure.config.logging_config import setup_logging, get_logger
+from fastapi.openapi.utils import get_openapi
+
 
 def create_app() -> FastAPI:
 	setup_logging()
@@ -49,6 +51,27 @@ def create_app() -> FastAPI:
 	api_router.include_router(emprestimo_router)
 
 	app.include_router(api_router)
+
+	def custom_openapi():
+		if app.openapi_schema:
+			return app.openapi_schema
+		schema = get_openapi(
+			title=app.title,
+			version=app.version,
+			description=app.description,
+			routes=app.routes,
+		)
+		security_schemes = schema.get("components", {}).get("securitySchemes", {})
+		if "OAuth2PasswordBearer" in security_schemes:
+			security_schemes["OAuth2PasswordBearer"] = {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT",
+			}
+		app.openapi_schema = schema
+		return app.openapi_schema
+
+	app.openapi = custom_openapi
 	
 	logger.info("Aplicação configurada com sucesso!")
 	return app 
