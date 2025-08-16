@@ -338,9 +338,6 @@ poetry run pytest
 
 # Executar com coverage
 poetry run pytest --cov=src
-
-# Executar testes específicos
-poetry run pytest tests/test_usuario.py
 ```
 
 ## 🔍 **Monitoramento e Observabilidade**
