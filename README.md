@@ -1,4 +1,7 @@
-# API Library - Sistema de Gerenciamento de Livros e Empréstimos
+# API Library - Sistema de Gerenciamento de Livros e Empréstimos    
+
+
+teste
 
 Uma API REST para gerenciamento de livros, usuários, pessoas e empréstimos de livros, construída com FastAPI seguindo princípios de Clean Architecture.
 
