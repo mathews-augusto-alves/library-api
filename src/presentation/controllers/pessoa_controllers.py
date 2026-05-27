@@ -17,9 +17,9 @@ class PessoaControllers:
 		result = self.usecase.criar_pessoa(pessoa)
 		
 		cache_delete_safe(cache, "pessoas:list")
-		if result.email:
-			cache_delete_safe(cache, f"pessoas:email:{result.email}")
 		cache_delete_safe(cache, f"pessoas:{result.id}")
+			cache_delete_safe(cache, f"pessoas:email:{result.email}")
+		if result.email:
 		
 		return result
 
@@ -30,15 +30,15 @@ class PessoaControllers:
 		pagination = PaginationParams(page=page, size=size)
 		pagination.validate_page_size()
 		
-		cache_key = f"pessoas:list:page:{pagination.page}:size:{pagination.size}"
-		
-		cached = cache_get_safe(cache, cache_key)
 		if cached:
 			cached_data = json.loads(cached)
 			return PaginatedResponse(
 				data=[PessoaResponse(**p) for p in cached_data["data"]],
 				meta=PaginationMeta(**cached_data["meta"])
 			)
+		cache_key = f"pessoas:list:page:{pagination.page}:size:{pagination.size}"
+		
+		cached = cache_get_safe(cache, cache_key)
 		
 		pessoas, total = self.usecase.listar_pessoas_paginado(pagination.page, pagination.size)
 		
