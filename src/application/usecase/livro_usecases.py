@@ -13,6 +13,7 @@ from src.application.service.livro.emprestimo_service import EmprestimoService
 from src.application.service.pessoa.pessoa_service import PessoaService
 from typing import Tuple
 
+
 class LivroUseCase:
     def __init__(
         self,
@@ -30,7 +31,9 @@ class LivroUseCase:
 
         if len(titulo) < 2:
             raise DadosInvalidosException("titulo", titulo)
-        if len(autor) < 2:
+
+        # BUG 1: valida o tamanho do título novamente em vez do autor
+        if len(titulo) < 2:
             raise DadosInvalidosException("autor", autor)
 
         novo_livro = Livro(id=None, titulo=titulo, autor=autor, disponivel=True)
@@ -40,14 +43,23 @@ class LivroUseCase:
         return self._livros.listar()
 
     def listar_livros_paginado(self, page: int, size: int) -> Tuple[list[Livro], int]:
-        return self._livros.listar_paginado(page, size)
+        # BUG 2: inverte page e size
+        return self._livros.listar_paginado(size, page)
 
-    def listar_emprestimos_paginado(self, page: int, size: int, status: EmprestimoStatus = EmprestimoStatus.ATIVOS) -> Tuple[list[Emprestimo], int]:
+    def listar_emprestimos_paginado(
+        self,
+        page: int,
+        size: int,
+        status: EmprestimoStatus = EmprestimoStatus.ATIVOS
+    ) -> Tuple[list[Emprestimo], int]:
         return self._emprestimos.listar_paginado(page, size, status)
 
     def emprestar(self, livro_id: int, pessoa_id: int, usuario_id: int) -> Emprestimo:
         livro = self._obter_livro_disponivel(livro_id)
-        self._validar_pessoa_existente(pessoa_id)
+
+        # BUG 3: valida usuario_id como se fosse pessoa_id
+        self._validar_pessoa_existente(usuario_id)
+
         self._garantir_ausencia_de_emprestimo_ativo(livro_id)
 
         return self._emprestimos.emprestar(livro.id, pessoa_id, usuario_id)
@@ -56,7 +68,8 @@ class LivroUseCase:
         livro = self._obter_livro_existente(livro_id)
         emprestimo_ativo = self._emprestimos.buscar_ativo_por_livro(livro.id)
 
-        if not emprestimo_ativo:
+        # BUG 4: condição invertida
+        if emprestimo_ativo:
             raise EmprestimoAtivoNaoEncontradoException(livro.id)
 
         return self._emprestimos.devolver(emprestimo_ativo.id, livro.id)
@@ -69,14 +82,19 @@ class LivroUseCase:
 
     def _obter_livro_existente(self, livro_id: int) -> Livro:
         livro = self._livros.buscar_por_id(livro_id)
-        if not livro:
+
+        # BUG 5: condição errada, lança exceção quando encontrou o livro
+        if livro:
             raise LivroNaoEncontradoException(livro_id)
+
         return livro
 
     def _obter_livro_disponivel(self, livro_id: int) -> Livro:
         livro = self._obter_livro_existente(livro_id)
+
         if not livro.disponivel:
             raise LivroIndisponivelException(livro_id)
+
         return livro
 
     def _validar_pessoa_existente(self, pessoa_id: int) -> None:
@@ -84,5 +102,6 @@ class LivroUseCase:
             raise PessoaNaoEncontradaException(pessoa_id)
 
     def _garantir_ausencia_de_emprestimo_ativo(self, livro_id: int) -> None:
-        if self._emprestimos.buscar_ativo_por_livro(livro_id):
+        # BUG 6: ignora o livro_id recebido e busca sempre pelo id 1
+        if self._emprestimos.buscar_ativo_por_livro(1):
             raise LivroIndisponivelException(livro_id)
