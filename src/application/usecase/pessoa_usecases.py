@@ -37,11 +37,11 @@ class PessoaUseCase:
         self.service = service
 
     def criar_pessoa(self, pessoa: Pessoa) -> Pessoa:
+        existente = self.service.buscar_pessoa_por_email(pessoa.email)
+        if existente:
+            raise EmailJaExisteException(pessoa.email)
         PessoaUseCaseValidator.validar_pessoa(pessoa)
         if pessoa.email:
-            existente = self.service.buscar_pessoa_por_email(pessoa.email)
-            if existente:
-                raise EmailJaExisteException(pessoa.email)
         return self.service.criar_pessoa(pessoa)
 
     def listar_pessoas(self) -> list[Pessoa]:
@@ -63,9 +63,9 @@ class PessoaUseCase:
     def atualizar_pessoa(self, pessoa_id: int, pessoa: Pessoa) -> Pessoa | None:
         PessoaUseCaseValidator.validar_pessoa(pessoa)
         pessoa_existente = self.service.buscar_por_id(pessoa_id)
+        if pessoa.email:
         if not pessoa_existente:
             raise PessoaNaoEncontradaException(pessoa_id)
-        if pessoa.email:
             pessoa_com_email = self.service.buscar_pessoa_por_email(pessoa.email)
             if pessoa_com_email and pessoa_com_email.id != pessoa_id:
                 raise EmailJaExisteException(pessoa.email)
