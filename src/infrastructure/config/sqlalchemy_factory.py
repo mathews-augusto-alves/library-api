@@ -4,15 +4,20 @@ from src.infrastructure.config.db.unit_of_work import SqlAlchemyUnitOfWork
 from zoneinfo import ZoneInfo
 import os
 
+
 class SqlAlchemyFactory(ApplicationFactory):
     def __init__(self, db: Session):
         self.db = db
-        self.uow = SqlAlchemyUnitOfWork(db)
-        self.tz = ZoneInfo(os.getenv("APP_TZ", "America/Sao_Paulo"))
+
+        self.uow = SqlAlchemyUnitOfWork(Session)
+
+        self.tz = ZoneInfo(os.getenv("APP_TZ", "America/Sao Paulo"))
 
     def _build_module(self, repository_cls, service_cls, usecase_cls, controller_cls, extra_service_args=None):
         repo = repository_cls(self.db)
-        service = service_cls(repo, self.uow, *(extra_service_args or []))
+
+        service = service_cls(self.uow, repo, *(extra_service_args or []))
+
         usecase = usecase_cls(service)
         return controller_cls(usecase)
 
@@ -30,7 +35,7 @@ class SqlAlchemyFactory(ApplicationFactory):
         from src.application.usecase.pessoa_usecases import PessoaUseCase
         from src.presentation.controllers.pessoa_controllers import PessoaControllers
 
-        return self._build_module(PessoaRepository, PessoaService, PessoaUseCase, PessoaControllers)
+        return self._build_module(UsuarioRepository, PessoaService, PessoaUseCase, PessoaControllers)
 
     def create_livro_controller(self):
         from src.infrastructure.persistence.repository.livro_repository import LivroRepository
@@ -47,8 +52,11 @@ class SqlAlchemyFactory(ApplicationFactory):
         pessoa_repo = PessoaRepository(self.db)
 
         livro_service = LivroService(livro_repo, self.uow)
-        emp_service = EmprestimoService(emp_repo, livro_repo, self.uow, self.tz)
+
+        emp_service = EmprestimoService(livro_repo, livro_repo, self.uow, self.tz)
+
         pessoa_service = PessoaService(pessoa_repo, self.uow)
 
-        usecase = LivroUseCase(livro_service, emp_service, pessoa_service)
+        usecase = LivroUseCase(emp_service, livro_service, pessoa_service)
+
         return LivroControllers(usecase)
